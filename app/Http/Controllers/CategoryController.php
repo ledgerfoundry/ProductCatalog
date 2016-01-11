@@ -24,7 +24,7 @@ class CategoryController extends Controller
     private function validator($params){
     	$check = ['name'=>$params['name'],'parent_id'=>$params['parent_id']];
     	return Validator::make($check, [
-    	        'name' => 'required|unique:categories|min:3|max:255',
+    	        'name' => 'required|unique:categories,id,:id|min:3|max:255',
     	        'parent_id' => 'required',
     	]);
     }
@@ -32,7 +32,7 @@ class CategoryController extends Controller
 
     public function index(){
     	$categories = Category::all();
-		return view('category.index')->with('categories', $categories);
+        return view('category.index')->with('categories', $categories);
     }
 
     public function create(){
@@ -43,11 +43,15 @@ class CategoryController extends Controller
  	public function store(Request $request){
  		$validator=$this->validator($request);
     	if(!$validator->fails()){
-    		Category::create([
+    		$cat=Category::create([
     			'name'=>$request['name'],
     			'parent_id'=>$request['parent_id']
     		]);
-    		return redirect('/category');
+            if($cat->parent_id == "0"){
+                $cat->parent_id = $cat->id;
+                $cat->save();
+            }
+            return redirect('/category');
     	}else{
     		return redirect('/category/create')
                         ->withErrors($validator)
@@ -72,10 +76,15 @@ class CategoryController extends Controller
 	public function update($id,Request $request){
 		$validator=$this->validator($request);
 	   	if(!$validator->fails()){
-	   		Category::where('id',$id)->update([
+	   		Category::find($id)->update([
 	   			'name'=>$request['name'],
 	   			'parent_id'=>$request['parent_id']
 	   		]);
+            $cat=Category::find($id);
+            if($cat->parent_id == 0){
+                $cat->parent_id = $cat->id;
+                $cat->save();
+            }
 	   		return redirect('/category/'.$id);
 	   	}else{
 	   		return redirect('/category/edit/'.$id)

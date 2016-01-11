@@ -28,8 +28,12 @@
             		@foreach($categories as $category)
             		<tr>
             			<td>{{$category->name}}</td>
-            			<td>{{$category->parent_id}}</td>
-            			<td>
+                        @if($category->name == $category->parent->name)
+                        <td>Root</td>
+                        @else
+            			<td>{{$category->parent->name}}</td>
+            			@endif
+                        <td>
             				<a href="category/{{$category->id}}">Show</a>
             				<a href="category/{{$category->id}}/edit">Edit</a>
                             {!! Form::open([

@@ -21,7 +21,7 @@ class ProductsController extends Controller
     private function validator($params){
         $check = ['name'=>$params['name'],'description'=>$params['description'],'categories'=>$params['categories']];
         return Validator::make($check, [
-                'name' => 'required|unique:products|min:3|max:255',
+                'name' => 'required|unique:products,id,:id|min:3|max:255',
                 'description' => 'required',
                 'categories'=>'required'
         ]);

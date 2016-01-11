@@ -25,7 +25,11 @@
                             Parent
                         </th>
                         <td>
-                            {{$category->parent_id}}
+                            @if($category->parent->name==$category->name)
+                                Root
+                            @else
+                                {{$category->parent->name}}
+                            @endif
                         </td>
 
                         
